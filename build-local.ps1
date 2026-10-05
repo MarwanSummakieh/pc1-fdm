@@ -47,7 +47,7 @@ if ($Target -in @('probe','controller-test')) {
     $taskStart.ArgumentList.Clear()
     $taskStart.FileName = Join-Path $taskVcRoot 'bin/Hostx64/x86/cl.exe'
     $taskTestSource = if ($Target -eq 'probe') { 'torrent-probe' } else { 'controller-input-test' }
-    foreach ($taskArg in @('/nologo','/MD','/EHsc','/DUNICODE','/D_UNICODE','/std:c++14',"$taskTestSource.cpp","/Fe$taskTestSource.exe")) { $taskStart.ArgumentList.Add($taskArg) }
+    foreach ($taskArg in @('/nologo','/MD','/EHsc','/DUNICODE','/D_UNICODE','/std:c++14',"tests/$taskTestSource.cpp","/Fe$taskTestSource.exe")) { $taskStart.ArgumentList.Add($taskArg) }
 }
 if ($Target -eq 'boost') {
     $taskStart.ArgumentList.Clear()
