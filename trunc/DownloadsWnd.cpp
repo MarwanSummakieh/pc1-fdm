@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "FdmApp.h"
+#include "FdmControllerWnd.h"
 #include "DownloadsWnd.h"
 #include "CreateDownloadDlg.h"
 #include "CreateTPDownloadDlg.h"
@@ -3251,6 +3252,12 @@ void CDownloadsWnd::NotifyUserAboutDownloadCompletion(vmsDownloadSmartPtr dld)
 	assert (dld->pMgr->IsDone ());
 	if (!dld->pMgr->IsDone ())
 		return;
+	if (GetEnvironmentVariable(_T("FDM_CONTROLLER_UI"), NULL, 0))
+	{
+		TCHAR name[MY_MAX_PATH]; CDownloads_Tasks::GetFileName(dld, name);
+		FdmControllerNotify(_T("Download complete"), name);
+		return;
+	}
 
 	BOOL bNoBalloon = false;
 	tstring tstrMsg = LS (L_DONE);

@@ -285,6 +285,7 @@ protected:
 	afx_msg void OnCheckAvpPresence();
 	//{{AFX_MSG(CMainFrame)
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg void OnControllerView();
 	afx_msg void OnSetFocus(CWnd *pOldWnd);
 	afx_msg void OnClose();
 	afx_msg void OnDlddefoptions();

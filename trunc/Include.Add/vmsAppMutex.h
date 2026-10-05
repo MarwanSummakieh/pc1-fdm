@@ -12,6 +12,8 @@ public:
 	vmsAppMutex(LPCTSTR ptszMutexName)
 	{
 		m_tstrName = ptszMutexName;
+		if (GetEnvironmentVariable(_T("FDM_LOCAL_TEST"), NULL, 0))
+			m_tstrName += _T(" - local source test");
 		m_hmxApp = NULL;
 		m_bAnotherInstanceStartedAlready = false;		
 		Create ();

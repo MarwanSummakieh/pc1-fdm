@@ -57,6 +57,9 @@ vmsBtSessionImpl::vmsBtSessionImpl(void)
 	m_session.add_dht_router(std::make_pair(std::string("dht.aelitis.com"), 6881)); 
 
 	libtorrent::session_settings ss = m_session.settings ();
+	// The controlled loopback test needs rate limits to exercise partial resume.
+	if (GetEnvironmentVariableA("FDM_LOCAL_TEST", NULL, 0))
+		ss.ignore_limits_on_local_network = false;
 	ss.active_downloads = ss.active_seeds = ss.active_limit = 100000;
 	
 	

@@ -1,0 +1,11 @@
+name: controller-input
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  controller-input:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: g++ -std=c++14 tests/controller-input-test.cpp -o /tmp/pc1-fdm-input
+      - run: /tmp/pc1-fdm-input

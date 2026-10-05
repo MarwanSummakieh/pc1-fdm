@@ -5,6 +5,7 @@
 #include "stdafx.h"
 
 #include "FdmApp.h"
+#include "FdmControllerWnd.h"
 #include "dbghelp.h"
 
 #include "MainFrm.h"
@@ -88,8 +89,21 @@ vmsAppMutex _appMutex (_T ("Free Download Manager"));
 vmsRunningAppVersionInfo g_appVersion;
 std::unique_ptr <vmsAppCrashReporter> g_crashReporter;
 
+static void localTestTrace(const char *message)
+{
+	if (!GetEnvironmentVariableA("FDM_LOCAL_TEST", NULL, 0)) return;
+	char path[MAX_PATH]; GetModuleFileNameA(NULL,path,MAX_PATH);
+	char *name=strrchr(path,'\\'); if(!name) return;
+	strcpy(name+1,"startup-test.log");
+	HANDLE f=CreateFileA(path,FILE_APPEND_DATA,FILE_SHARE_READ|FILE_SHARE_WRITE,NULL,OPEN_ALWAYS,0,NULL);
+	if(f==INVALID_HANDLE_VALUE) return;
+	DWORD written; WriteFile(f,message,(DWORD)strlen(message),&written,NULL);
+	WriteFile(f,"\r\n",2,&written,NULL); CloseHandle(f);
+}
+
 BOOL CFdmApp::InitInstance()
 {
+	localTestTrace("InitInstance");
 	g_crashReporter.reset (new vmsAppCrashReporter (
 		g_appVersion.getVersion ()->m_tstrProductName,
 		L"",
@@ -118,14 +132,18 @@ BOOL CFdmApp::InitInstance()
 	
 	SetRegistryKey (IDS_COMPANY);
 
-	CheckRegistry ();
-
-	fsIECatchMgr::CleanIEPluginKey ();
+	const bool localTest = GetEnvironmentVariable(_T("FDM_LOCAL_TEST"), NULL, 0) != 0;
+	const bool portableFork = localTest || GetEnvironmentVariable(_T("FDM_CONTROLLER_PORTABLE"), NULL, 0) != 0;
+	if (!portableFork)
+	{
+		CheckRegistry ();
+		fsIECatchMgr::CleanIEPluginKey ();
+	}
 
 	
-	CString strPath = GetProfileString (_T(""), _T("Path"), _T(""));
+	CString strPath = portableFork ? _T("") : GetProfileString (_T(""), _T("Path"), _T(""));
 	BOOL bNeedLocalRegister = FALSE;
-	if (strPath == _T(""))
+	if (strPath == _T("") && !portableFork)
 	{
 		CRegKey key;
 		if (ERROR_SUCCESS == key.Open (HKEY_CURRENT_USER, _T("Software\\FreeDownloadManager.ORG\\Free Download Manager"), KEY_WRITE))
@@ -154,6 +172,8 @@ BOOL CFdmApp::InitInstance()
 		strPath = tszExeDir;
 		SetCurrentDirectory (strPath);
 	}
+	if (portableFork)
+		_dwAppState |= APPSTATE_PORTABLE_MODE_NOREG;
 
 	m_strAppPath = strPath;
 	if (m_strAppPath.IsEmpty () == FALSE)
@@ -186,6 +206,33 @@ BOOL CFdmApp::InitInstance()
 		CString strStgsFile = m_strAppPath + "Data\\settings.dat";
 		fsBuildPathToFile (strStgsFile);
 		pStgs->LoadSettingsFromFile (strStgsFile);
+		if (portableFork)
+		{
+			_App.Monitor_UserSwitchedOn(0);
+			_App.Monitor_IE1(FALSE);
+			_App.Monitor_IE2(FALSE);
+			_App.Monitor_Firefox(FALSE);
+			_App.Monitor_Chrome(FALSE);
+			_App.Monitor_Clipboard(FALSE);
+			if (GetEnvironmentVariable(_T("FDM_CONTROLLER_UI"), NULL, 0))
+			{
+				_App.View_FloatingWindow(FALSE);
+				_App.View_FloatingInfoWindow(FALSE);
+				_App.Notif_UseBalloon(FALSE);
+				_App.Notif_UseOnDoneWnds(FALSE);
+				_App.Snd_Use(FALSE);
+			}
+			if (localTest)
+			{
+				_App.Bittorrent_EnableDHT(FALSE);
+				_App.Bittorrent_EnableLocalPeerDiscovery(FALSE);
+				_App.Bittorrent_EnableUPnP(FALSE);
+				_App.Bittorrent_EnableNATPMP(FALSE);
+			}
+			_App.Community_CheckIfMalBeforeDlding(FALSE);
+			_App.Community_DisplayOpinionsAtDlding(FALSE);
+			_App.Update_AutoUpdateType(AUT_TURNOFF);
+		}
 		_App.ApplySettingsToMutexes ();
 	}
 
@@ -217,6 +264,7 @@ BOOL CFdmApp::InitInstance()
 	}
 
 	_SkinMgr.Initialize ();
+	localTestTrace("Skin initialized");
 
 	_IECatchMgr.ReadSettings ();
 	_NOMgr.Initialize ();
@@ -224,6 +272,7 @@ BOOL CFdmApp::InitInstance()
 
 	
 	HRESULT hRes = OleInitialize (NULL);
+	localTestTrace("OLE initialized");
 	
 	if (FAILED(hRes))
 		return FALSE;
@@ -236,6 +285,7 @@ BOOL CFdmApp::InitInstance()
 		_App.RecentVersionRun (currentVersion);
 
 	vmsAppGlobalObjects::Create2 (currentVersionFirstRun);
+	localTestTrace("Global objects created");
 
 	fsFDMCmdLineParser cmdline;
 
@@ -289,12 +339,14 @@ BOOL CFdmApp::InitInstance()
 	}
 
 	cmdline.Parse (fsFDMCmdLineParser::Normal);
+	localTestTrace("Command line parsed");
 
 	if (CheckFdmStartedAlready (m_bForceSilentSpecified == FALSE))
 		return FALSE;
 
 	if (!InitATL())
 		return FALSE;
+	localTestTrace("ATL initialized");
 
 	_App.StartCount (_App.StartCount () + 1);
 
@@ -335,6 +387,7 @@ BOOL CFdmApp::InitInstance()
 	vmsFlvSniffInjector::o ().Enable (_App.FlvMonitoring_Enable () != FALSE);
 
 	LoadHistory ();
+	localTestTrace("History loaded");
 
 	_Snds.ReadSettings ();
 
@@ -347,6 +400,7 @@ BOOL CFdmApp::InitInstance()
 	auto ytdllmgr = std::make_shared <vmsYouTubeParserDllMgr> (
 		std::make_shared <vmsAppDataFolder> (L"FreeDownloadManager.ORG", L"Free Download Manager"),
 		currentVersionFirstRun);
+	localTestTrace("YouTube manager created");
 	vmsYouTubeParserDllMgr::reset (ytdllmgr);
 
 	auto avMerger = std::make_shared<vmsAVMergerFFMPEG>();
@@ -362,8 +416,10 @@ BOOL CFdmApp::InitInstance()
 	if (FALSE == pFrame->LoadFrame(IDR_MAINFRAME, WS_OVERLAPPEDWINDOW | FWS_ADDTOTITLE, 
 		NULL, NULL))
 	{
+		localTestTrace("LoadFrame failed");
 		return FALSE;
 	}
+	localTestTrace("Main window loaded");
 
 	
 	BOOL bHidden = _tcscmp (m_lpCmdLine, _T ("-autorun")) == 0;
@@ -413,6 +469,7 @@ BOOL CFdmApp::InitInstance()
 			LocalFree( lpMsgBuf );
 	}
 	m_bATLInited2 = SUCCEEDED (hRes);
+	if (GetEnvironmentVariable(_T("FDM_CONTROLLER_UI"), NULL, 0)) FdmShowController(pFrame);
 
 	return TRUE;
 }
@@ -478,6 +535,7 @@ void CFdmApp::OnAppAbout()
 
 int CFdmApp::ExitInstance() 
 {
+	FdmCloseController();
 	if (m_bATLInited2)
 		_Module.RevokeClassObjects();
 

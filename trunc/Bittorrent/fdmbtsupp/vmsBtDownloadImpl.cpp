@@ -192,6 +192,8 @@ void vmsBtDownloadImpl::Pause ()
 {
 	if (m_handle.is_valid () == false)
 		return;
+	// Explicit pauses must survive libtorrent's automatic queue management.
+	m_handle.auto_managed(false);
 	m_handle.pause ();
 }
 

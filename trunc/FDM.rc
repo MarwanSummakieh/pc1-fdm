@@ -4019,6 +4019,7 @@ IDB_GROUPSMENU_D        BITMAP                  "res\\groupsmenu_d.bmp"
 
 IDR_MAINFRAME ACCELERATORS
 BEGIN
+    VK_F10,         41490,                  VIRTKEY, NOINVERT
     "1",            ID_TUM_LIGHT,           VIRTKEY, CONTROL, NOINVERT
     "1",            ID_ALT1,                VIRTKEY, ALT, NOINVERT
     "2",            ID_TUM_MEDIUM,          VIRTKEY, CONTROL, NOINVERT

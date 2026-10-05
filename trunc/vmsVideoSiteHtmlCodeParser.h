@@ -25,10 +25,10 @@ public:
 	{
 		
 		#define register_site_with_subdomains(s,n)\
-			if (_tcsicmp (pszSite, ##s) == 0)\
+			if (_tcsicmp (pszSite, s) == 0)\
 				return n;\
-			if (lstrlen (pszSite) > lstrlen (_T(".")##s) && \
-					_tcsnicmp (pszSite + lstrlen (pszSite) - lstrlen (_T(".")##s), _T(".")##s, lstrlen (_T(".")##s)) == 0)\
+			if (lstrlen (pszSite) > lstrlen (_T(".") s) && \
+					_tcsnicmp (pszSite + lstrlen (pszSite) - lstrlen (_T(".") s), _T(".") s, lstrlen (_T(".") s)) == 0)\
 				return n;
 		
 

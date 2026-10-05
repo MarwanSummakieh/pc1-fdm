@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "FdmApp.h"
+#include "FdmControllerWnd.h"
 #include "EnterKeyDlg.h"
 #include "fsUrlsToDownloadRegKeyMgr.h"
 #include "mfchelp.h"
@@ -80,6 +81,7 @@ extern CSpiderWnd* _pwndSpider;
 IMPLEMENT_DYNAMIC(CMainFrame, CFrameWnd)
 
 BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
+	ON_COMMAND(41490, OnControllerView)
 	//{{AFX_MSG_MAP(CMainFrame)
 	ON_WM_CREATE()
 	ON_WM_SETFOCUS()
@@ -2173,6 +2175,11 @@ void CMainFrame::HideBalloon()
 
 void CMainFrame::ShowBalloon(LPCTSTR pszInfo, LPCTSTR pszTitle, BOOL bCheckSettings, DWORD dwIcon)
 {
+	if (GetEnvironmentVariable(_T("FDM_CONTROLLER_UI"), NULL, 0))
+	{
+		FdmControllerNotify(pszTitle, pszInfo);
+		return;
+	}
 	if (bCheckSettings && _App.Notif_UseBalloon () == FALSE)
 		return;
 
@@ -2185,6 +2192,7 @@ void CMainFrame::ShowBalloon(LPCTSTR pszInfo, LPCTSTR pszTitle, BOOL bCheckSetti
 
 void CMainFrame::Balloon_ShowDLInfo(BOOL bCheckSettings)
 {
+	if (GetEnvironmentVariable(_T("FDM_CONTROLLER_UI"), NULL, 0)) return;
 	CString str; 
 
 	if (bCheckSettings && _App.Notif_UseBalloon () == FALSE)
@@ -3321,6 +3329,7 @@ void CMainFrame::ShowOnDownloadDoneBalloon(fsDownload *dld)
 
 void CMainFrame::ShowFdmBalloon(CFdmBalloonContent* pContent, FdmBalloonContentType enCT)
 {
+	if (GetEnvironmentVariable(_T("FDM_CONTROLLER_UI"), NULL, 0)) { delete pContent; return; }
 	HideBalloon ();
 
 	m_pFdmBalloon = new CFdmBalloon (pContent);
@@ -3735,6 +3744,7 @@ bool CMainFrame::onExit(bool bQueryExit)
 	if (bQueryExit && !_PluginMgr.QueryExit ())
 		return false;
 
+	FdmCloseController();
 	Shutdown (true);
 
 	
@@ -3791,3 +3801,5 @@ void CMainFrame::OnActivate(UINT nState, CWnd* pWndOther,BOOL bMinimized )
 	CFrameWnd::OnActivate( nState, pWndOther, bMinimized );
 }
 
+
+void CMainFrame::OnControllerView() { FdmShowController(this); }

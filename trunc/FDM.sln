@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.40629.0
@@ -58,8 +58,6 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FdmBrowserHelper", "FdmBrowserHelper\FdmBrowserHelper.vcxproj", "{F43CE010-E5F0-45D1-89C5-3DCE111C2187}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FdmBhSniffDllProxy", "FdmBhSniffDllProxy\FdmBhSniffDllProxy.vcxproj", "{11ECF154-E7E0-4C8B-AC07-4673C56CAC3E}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NetworkMonitor", "NetworkMonitor\NetworkMonitor.vcxproj", "{029E59D3-810E-4E39-9BDF-35984A03B3AF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -659,32 +657,9 @@ Global
 		{11ECF154-E7E0-4C8B-AC07-4673C56CAC3E}.Template|Win32.ActiveCfg = Release|Win32
 		{11ECF154-E7E0-4C8B-AC07-4673C56CAC3E}.Template|Win32.Build.0 = Release|Win32
 		{11ECF154-E7E0-4C8B-AC07-4673C56CAC3E}.Template|x64.ActiveCfg = Release|Win32
-		{029E59D3-810E-4E39-9BDF-35984A03B3AF}.Debug_noCURL|Win32.ActiveCfg = Debug|Win32
-		{029E59D3-810E-4E39-9BDF-35984A03B3AF}.Debug_noCURL|Win32.Build.0 = Debug|Win32
-		{029E59D3-810E-4E39-9BDF-35984A03B3AF}.Debug_noCURL|x64.ActiveCfg = Debug|Win32
-		{029E59D3-810E-4E39-9BDF-35984A03B3AF}.Debug|Win32.ActiveCfg = Debug|Win32
-		{029E59D3-810E-4E39-9BDF-35984A03B3AF}.Debug|Win32.Build.0 = Debug|Win32
-		{029E59D3-810E-4E39-9BDF-35984A03B3AF}.Debug|x64.ActiveCfg = Debug|Win32
-		{029E59D3-810E-4E39-9BDF-35984A03B3AF}.Release_noCURL|Win32.ActiveCfg = Release|Win32
-		{029E59D3-810E-4E39-9BDF-35984A03B3AF}.Release_noCURL|Win32.Build.0 = Release|Win32
-		{029E59D3-810E-4E39-9BDF-35984A03B3AF}.Release_noCURL|x64.ActiveCfg = Release|Win32
-		{029E59D3-810E-4E39-9BDF-35984A03B3AF}.Release_nossl|Win32.ActiveCfg = Release|Win32
-		{029E59D3-810E-4E39-9BDF-35984A03B3AF}.Release_nossl|Win32.Build.0 = Release|Win32
-		{029E59D3-810E-4E39-9BDF-35984A03B3AF}.Release_nossl|x64.ActiveCfg = Release|Win32
-		{029E59D3-810E-4E39-9BDF-35984A03B3AF}.Release|Win32.ActiveCfg = Release|Win32
-		{029E59D3-810E-4E39-9BDF-35984A03B3AF}.Release|Win32.Build.0 = Release|Win32
-		{029E59D3-810E-4E39-9BDF-35984A03B3AF}.Release|x64.ActiveCfg = Release|Win32
-		{029E59D3-810E-4E39-9BDF-35984A03B3AF}.Release-MT|Win32.ActiveCfg = Release|Win32
-		{029E59D3-810E-4E39-9BDF-35984A03B3AF}.Release-MT|Win32.Build.0 = Release|Win32
-		{029E59D3-810E-4E39-9BDF-35984A03B3AF}.Release-MT|x64.ActiveCfg = Release|Win32
-		{029E59D3-810E-4E39-9BDF-35984A03B3AF}.Release-MT-dbg|Win32.ActiveCfg = Release|Win32
-		{029E59D3-810E-4E39-9BDF-35984A03B3AF}.Release-MT-dbg|Win32.Build.0 = Release|Win32
-		{029E59D3-810E-4E39-9BDF-35984A03B3AF}.Release-MT-dbg|x64.ActiveCfg = Release|Win32
-		{029E59D3-810E-4E39-9BDF-35984A03B3AF}.Template|Win32.ActiveCfg = Release|Win32
-		{029E59D3-810E-4E39-9BDF-35984A03B3AF}.Template|Win32.Build.0 = Release|Win32
-		{029E59D3-810E-4E39-9BDF-35984A03B3AF}.Template|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal
+
